@@ -1,7 +1,7 @@
 package ec.edu.ups.kelvin.Gestion.de.tareas.controllers;
 
-import ec.edu.ups.kelvin.gestion.de.tareas.entities.Tarea;
-import ec.edu.ups.kelvin.gestion.de.tareas.repositories.TareaRepository;
+import ec.edu.ups.kelvin.Gestion.de.tareas.entities.Tarea;
+import ec.edu.ups.kelvin.Gestion.de.tareas.repositories.TareaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
