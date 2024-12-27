@@ -1,10 +1,13 @@
 package com.task.personal.Controller;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task.personal.Entity.TareaEntity;
 import com.task.personal.Service.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,9 @@ public class TareaController {
 
     @Autowired
     private TareaService tareaService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     // Crear una nueva tarea
     @PostMapping
@@ -32,6 +38,13 @@ public class TareaController {
     @GetMapping
     public ResponseEntity<List<TareaEntity>> getAllTareas() {
         return ResponseEntity.ok(tareaService.getAllTareas());
+    }
+
+    // Obtener las tareas de un usuario específico
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<TareaEntity>> getTareasByUsuarioId(@PathVariable Long idUsuario) {
+        List<TareaEntity> tareas = tareaService.getTareasByUsuarioId(idUsuario);
+        return ResponseEntity.ok(tareas);
     }
 
     // Actualizar una tarea existente
@@ -59,4 +72,23 @@ public class TareaController {
         Optional<TareaEntity> tarea = tareaService.updateEstadoTarea(idTarea, nuevoEstado);
         return tarea.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+    // Endpoint para cargar un archivo JSON y guardar las tareas en la base de datos
+    @PostMapping("/upload")
+    public String uploadTareasFile(@RequestParam("file") MultipartFile file) {
+        try {
+            // Convertir el archivo JSON a una lista de objetos TareaEntity
+            List<TareaEntity> tarea = objectMapper.readValue(file.getInputStream(), objectMapper.getTypeFactory().constructCollectionType(List.class, TareaEntity.class));
+
+            // Guardar las tareas en la base de datos
+            tareaService.saveTareas(tarea);
+
+            return "Archivo procesado y tareas guardadas con éxito.";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error al procesar el archivo.";
+        }
+    }
+
+
 }

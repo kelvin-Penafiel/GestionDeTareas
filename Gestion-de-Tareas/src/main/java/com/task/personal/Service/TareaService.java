@@ -1,5 +1,7 @@
 package com.task.personal.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task.personal.Entity.TareaEntity;
 import com.task.personal.repository.TareaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,11 @@ public class TareaService {
         return tareaRepository.findAll();
     }
 
+    // Método para obtener las tareas de un usuario
+    public List<TareaEntity> getTareasByUsuarioId(Long idUsuario) {
+        return tareaRepository.findByUsuarioId(idUsuario);
+    }
+
     // Eliminar una tarea por ID
     public void deleteTarea(Long idTarea) {
         tareaRepository.deleteById(idTarea);
@@ -43,4 +50,10 @@ public class TareaService {
         }
         return Optional.empty();
     }
+
+    // Método para guardar varias tareas a la vez
+    public void saveTareas(List<TareaEntity> tareas) {
+        tareaRepository.saveAll(tareas);  // Guardar todas las tareas de una vez
+    }
+
 }
